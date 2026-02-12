@@ -1,12 +1,19 @@
 import { useState } from 'react'
 import BoundlessOverview from './BoundlessOverview'
+import BoundlessAISolutions from './BoundlessAISolutions'
 
 const PASS = 'luna'
+
+const TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'opportunities', label: 'External Opportunities' },
+]
 
 function App() {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem('bl_auth') === '1')
   const [input, setInput] = useState('')
   const [error, setError] = useState(false)
+  const [tab, setTab] = useState('overview')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -19,7 +26,35 @@ function App() {
     }
   }
 
-  if (authed) return <BoundlessOverview />
+  if (authed) {
+    return (
+      <div className="min-h-screen bg-gray-950">
+        {/* Navigation */}
+        <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/90 backdrop-blur-sm">
+          <div className="flex items-center gap-1 px-4 py-2">
+            <span className="text-sm font-bold text-white tracking-tight mr-4">Boundless</span>
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  tab === t.id
+                    ? 'bg-white/10 text-white'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Content */}
+        {tab === 'overview' && <BoundlessOverview />}
+        {tab === 'opportunities' && <BoundlessAISolutions />}
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
